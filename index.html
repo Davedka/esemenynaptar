@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <title>Eseménynaptár</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f6f8;
+            color: #333;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #34495e;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #2c3e50;
+        }
+
+        .event {
+            border-left: 5px solid #3498db;
+            padding: 10px;
+            margin: 15px 0;
+            background: #ecf0f1;
+            border-radius: 5px;
+        }
+
+        .category {
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Eseménynaptár</h1>
+    <p>Minden fontos esemény egy helyen</p>
+</header>
+
+<nav>
+    <a href="#">Főoldal</a>
+    <a href="#">Események</a>
+    <a href="#">Kategóriák</a>
+    <a href="#">Kapcsolat</a>
+</nav>
+
+<div class="container">
+    <h2>Példa események</h2>
+
+    <div class="event">
+        <strong>Matematika dolgozat</strong><br>
+        <span>Dátum: 2026. március 12.</span><br>
+        <span class="category">Kategória: Oktatás</span>
+    </div>
+
+    <div class="event">
+        <strong>Iskolai focibajnokság</strong><br>
+        <span>Dátum: 2026. március 18.</span><br>
+        <span class="category">Kategória: Sport</span>
+    </div>
+
+    <div class="event">
+        <strong>Tavaszi koncert</strong><br>
+        <span>Dátum: 2026. április 2.</span><br>
+        <span class="category">Kategória: Szórakozás</span>
+    </div>
+</div>
+
+
+</body>
+</html>
