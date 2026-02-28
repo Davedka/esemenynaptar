@@ -1,12 +1,6 @@
 <?php
 session_start();
 
-// .env betöltése
-foreach (file(__DIR__ . "/.env") as $line) {
-    $line = trim($line);
-    if ($line && !str_starts_with($line, "#")) putenv($line);
-}
-
 $host = getenv("DB_HOST");
 $db   = "postgres";
 $user = "postgres";
