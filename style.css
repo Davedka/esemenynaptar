@@ -1,0 +1,149 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f9;
+    color: #222;
+}
+
+/* ===== NAVBAR ===== */
+
+.navbar {
+    background: #0b2e59;
+    color: white;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navbar a {
+    color: white;
+    margin-left: 20px;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.navbar a:hover {
+    text-decoration: underline;
+}
+
+/* ===== CONTAINER ===== */
+
+.container {
+    width: 420px;
+    margin: 60px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0b2e59;
+}
+
+/* ===== FORM ELEMEK ===== */
+
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #0b2e59;
+}
+
+/* ===== BUTTON ===== */
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    background: #0b2e59;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #092347;
+}
+
+/* ===== CALENDAR ===== */
+
+.calendar {
+    width: 95%;
+    max-width: 1100px;
+    margin: 30px auto;
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.calendar h2 {
+    text-align: center;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.day-name {
+    text-align: center;
+    font-weight: 600;
+    padding: 5px 0;
+    background: #e9edf3;
+    border-radius: 4px;
+}
+
+.day {
+    min-height: 110px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 6px;
+    background: #fafafa;
+    font-size: 13px;
+}
+
+.today {
+    border: 2px solid #c8102e;
+    background: #fff4f4;
+}
+
+.event {
+    background: #3a3f46;
+    color: white;
+    padding: 4px;
+    margin-top: 4px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.status {
+    color: #c8102e;
+    font-weight: 600;
+}
+
+/* ===== LINKS ===== */
+
+a {
+    color: #0b2e59;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
