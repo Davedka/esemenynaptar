@@ -1,6 +1,6 @@
 <?php
 
-$host = "aws-0-eu-central-1.pooler.supabase.com";
+$host = "eu-west-1.pooler.supabase.com";
 $port = "6543"; // fontos! pooling port
 $db   = "postgres";
 $user = "postgres.aywstgoezgowqqkrjoqq";
@@ -17,3 +17,4 @@ try {
 }
 
 ?>
+
