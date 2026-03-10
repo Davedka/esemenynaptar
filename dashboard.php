@@ -27,8 +27,8 @@ $visibilityFilter = $_GET['visibility'] ?? '';
 $query = "SELECT * FROM events 
           WHERE user_id = ? 
           AND is_deleted = FALSE
-          AND MONTH(event_date) = ?
-          AND YEAR(event_date) = ?";
+          AND EXTRACT(MONTH FROM event_date) = ?
+          AND EXTRACT(YEAR FROM event_date) = ?";
 
 $params = [$_SESSION["user_id"], $month, $year];
 
@@ -187,4 +187,5 @@ for ($day = 1; $day <= $daysInMonth; $day++) {
 
 </div>
 </div>
+
 
