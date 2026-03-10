@@ -1,28 +1,19 @@
 <?php
 
-// ===== Adatbázis adatok =====
-$host = getenv("DB_HOST") ?: "db.aywstgoezgowqqkrjoqq.supabase.co";
-$port = getenv("DB_PORT") ?: "5432";
-$db   = getenv("DB_NAME") ?: "postgres";
-$user = getenv("DB_USER") ?: "postgres";
-$pass = getenv("DB_PASSWORD") ?: "IDE_A_SUPABASE_DB_JELSZAVAD";
+$host = "aws-0-eu-central-1.pooler.supabase.com";
+$port = "6543"; // fontos! pooling port
+$db   = "postgres";
+$user = "postgres.aywstgoezgowqqkrjoqq";
+$pass = "A_JELSZAVAD";
+
+$dsn = "pgsql:host=$host;port=$port;dbname=$db";
 
 try {
-
-    // ===== DSN =====
-    $dsn = "pgsql:host=$host;port=$port;dbname=$db";
-
-    // ===== PDO kapcsolat =====
     $pdo = new PDO($dsn, $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, 
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
     ]);
-
 } catch (PDOException $e) {
-
-    // Hibakezelés
     die("Adatbázis kapcsolat hiba: " . $e->getMessage());
-
 }
 
 ?>
