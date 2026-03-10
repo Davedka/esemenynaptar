@@ -11,13 +11,13 @@ try {
         $password,
         [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ]
     );
 } catch (PDOException $e) {
-    echo "Hiba: " . $e->getMessage();
+    die("Adatbázis hiba: " . $e->getMessage());
 }
-?>
+
 
 
 
