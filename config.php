@@ -14,10 +14,10 @@ try {
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         ]
     );
-    echo "Sikeres kapcsolat!";
 } catch (PDOException $e) {
     echo "Hiba: " . $e->getMessage();
 }
+
 
 
 
