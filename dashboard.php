@@ -25,12 +25,16 @@ $categoryFilter = $_GET['category'] ?? '';
 $visibilityFilter = $_GET['visibility'] ?? '';
 
 $query = "SELECT * FROM events 
-          WHERE user_id = ? 
-          AND is_deleted = FALSE
+          WHERE is_deleted = FALSE
           AND EXTRACT(MONTH FROM event_date) = ?
-          AND EXTRACT(YEAR FROM event_date) = ?";
+          AND EXTRACT(YEAR FROM event_date) = ?
+          AND (
+              user_id = ?
+              OR visibility = 'public'
+              OR visibility = 'school'
+          )";
 
-$params = [$_SESSION["user_id"], $month, $year];
+$params = [$month, $year, $_SESSION["user_id"]];
 
 if ($categoryFilter) {
     $query .= " AND category = ?";
@@ -187,5 +191,6 @@ for ($day = 1; $day <= $daysInMonth; $day++) {
 
 </div>
 </div>
+
 
 
