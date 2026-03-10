@@ -24,25 +24,31 @@ $startDay = date("N", strtotime($firstDayOfMonth)); // 1 = hétfő
 $categoryFilter = $_GET['category'] ?? '';
 $visibilityFilter = $_GET['visibility'] ?? '';
 
-$query = "SELECT * FROM events 
-          WHERE is_deleted = FALSE
-          AND EXTRACT(MONTH FROM event_date) = ?
-          AND EXTRACT(YEAR FROM event_date) = ?
+/* Bejelentkezett user iskolájának lekérése */
+$userStmt = $pdo->prepare("SELECT school FROM users WHERE id = ?");
+$userStmt->execute([$_SESSION["user_id"]]);
+$currentUser = $userStmt->fetch();
+
+$query = "SELECT e.* FROM events e
+          JOIN users u ON e.user_id = u.id
+          WHERE e.is_deleted = FALSE
+          AND EXTRACT(MONTH FROM e.event_date) = ?
+          AND EXTRACT(YEAR FROM e.event_date) = ?
           AND (
-              user_id = ?
-              OR visibility = 'public'
-              OR visibility = 'school'
+              e.user_id = ?
+              OR e.visibility = 'public'
+              OR (e.visibility = 'school' AND u.school = ?)
           )";
 
-$params = [$month, $year, $_SESSION["user_id"]];
+$params = [$month, $year, $_SESSION["user_id"], $currentUser["school"]];
 
 if ($categoryFilter) {
-    $query .= " AND category = ?";
+    $query .= " AND e.category = ?";
     $params[] = $categoryFilter;
 }
 
 if ($visibilityFilter) {
-    $query .= " AND visibility = ?";
+    $query .= " AND e.visibility = ?";
     $params[] = $visibilityFilter;
 }
 
@@ -111,6 +117,7 @@ foreach ($events as $event) {
     <div>
         <?= $_SESSION["username"] ?> |
         <a href="add_event.php">Új esemény</a>
+        <a href="delete_account.php" style="color:red">Profil törlése</a>
         <a href="logout.php">Kijelentkezés</a>
     </div>
 </div>
@@ -166,7 +173,7 @@ for ($i = 1; $i < $startDay; $i++) {
 /* Napok kirajzolása */
 for ($day = 1; $day <= $daysInMonth; $day++) {
 
-    $isToday = ($day == date("j") && $month == date("m") && $year == date("Y")) 
+    $isToday = ($day == date("j") && $month == date("m") && $year == date("Y"))
                 ? "today" : "";
 
     echo "<div class='day $isToday'>";
@@ -181,6 +188,11 @@ for ($day = 1; $day <= $daysInMonth; $day++) {
                 echo " (Folyamatban)";
             }
 
+            if ($event["user_id"] == $_SESSION["user_id"]) {
+                echo "<br><a href='delete_event.php?id=" . $event["id"] . "' 
+                      style='color:#ffaaaa;font-size:11px'>🗑 Törlés</a>";
+            }
+
             echo "</div>";
         }
     }
@@ -191,6 +203,3 @@ for ($day = 1; $day <= $daysInMonth; $day++) {
 
 </div>
 </div>
-
-
-
