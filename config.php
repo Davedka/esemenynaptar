@@ -1,5 +1,5 @@
 <?php
-$host = "aws-0-eu-central-1.pooler.supabase.com";
+$host = "aws-1-eu-west-1.pooler.supabase.com";
 $port = "6543";
 $dbname = "postgres";
 $user = "postgres.aywstgoezgowqqkrjoqq";
@@ -18,4 +18,5 @@ try {
 } catch (PDOException $e) {
     echo "Hiba: " . $e->getMessage();
 }
+
 
