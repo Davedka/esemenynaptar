@@ -1,5 +1,4 @@
 <?php
-session_start();
 ob_start();
 require "config.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -36,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </p>
 
 </div>
+
 
 
 
