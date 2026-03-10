@@ -3,7 +3,7 @@ $host = "aws-1-eu-west-1.pooler.supabase.com";
 $port = "6543";
 $dbname = "postgres";
 $user = "postgres.aywstgoezgowqqkrjoqq";
-$password = "Gazitd0710";
+$password = "7kMbzylV6hfkHzmr";
 try {
     $pdo = new PDO(
         "pgsql:host=$host;port=$port;dbname=$dbname",
@@ -18,5 +18,6 @@ try {
 } catch (PDOException $e) {
     echo "Hiba: " . $e->getMessage();
 }
+
 
 
