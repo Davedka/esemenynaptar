@@ -115,7 +115,7 @@ foreach ($events as $event) {
         <strong>MSZC Gépészeti – Eseménynaptár</strong>
     </div>
     <div>
-        <?= $_SESSION["username"] ?> |
+         $_SESSION["fullname"]
         <a href="add_event.php">Új esemény</a>
         <a href="delete_account.php" style="color:red">Profil törlése</a>
         <a href="logout.php">Kijelentkezés</a>
@@ -203,3 +203,4 @@ for ($day = 1; $day <= $daysInMonth; $day++) {
 
 </div>
 </div>
+
