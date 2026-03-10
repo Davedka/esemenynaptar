@@ -5,6 +5,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->execute([$_POST["username"]]);
     $user = $stmt->fetch();
+    var_dump($user); // ezt adjuk hozzá ideiglenesen
+    
     if ($user && password_verify($_POST["password"], $user["password_hash"])) {
         $_SESSION["user_id"] = $user["id"];
         $_SESSION["username"] = $user["username"];
@@ -34,4 +36,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </p>
 
 </div>
+
 
