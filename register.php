@@ -1,11 +1,8 @@
 <?php
 require "config.php";
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     $password = $_POST["password"];
     $passwordError = "";
-
     // Jelszó validáció
     if (strlen($password) < 9) {
         $passwordError = "A jelszónak legalább 9 karakter hosszúnak kell lennie!";
@@ -14,23 +11,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/', $password)) {
         $passwordError = "A jelszónak tartalmaznia kell legalább egy speciális karaktert!";
     }
-
     if ($passwordError) {
         $error = $passwordError;
     } else {
-        // Ellenőrzés: foglalt-e már a username vagy email
-        $check = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-        $check->execute([$_POST["username"], $_POST["email"]]);
-
+        // Ellenőrzés: foglalt-e már az email
+        $check = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $check->execute([$_POST["email"]]);
         if ($check->fetch()) {
-            $error = "Ez a felhasználónév vagy email már foglalt!";
+            $error = "Ez az email cím már foglalt!";
         } else {
             $stmt = $pdo->prepare("INSERT INTO users 
-                (fullname, username, email, password_hash, role, school)
-                VALUES (?, ?, ?, ?, ?, ?)");
+                (fullname, email, password_hash, role, school)
+                VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([
                 $_POST["fullname"],
-                $_POST["username"],
                 $_POST["email"],
                 password_hash($password, PASSWORD_DEFAULT),
                 $_POST["role"],
@@ -48,7 +42,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>
     <form method="post">
         <input name="fullname" placeholder="Teljes név" required>
-        <input name="username" placeholder="Felhasználónév" required>
         <input name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Jelszó" required>
         <small style="color:gray">Min. 9 karakter, tartalmazzon számot és speciális karaktert (!@#$% stb.)</small>
