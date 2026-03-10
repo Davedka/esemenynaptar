@@ -17,6 +17,8 @@ try {
 } catch (PDOException $e) {
     echo "Hiba: " . $e->getMessage();
 }
+?>
+
 
 
 
