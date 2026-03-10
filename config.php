@@ -1,4 +1,5 @@
 <?php
+session_start();
 $host = "aws-1-eu-west-1.pooler.supabase.com";
 $port = "6543";
 $dbname = "postgres";
@@ -17,6 +18,7 @@ try {
 } catch (PDOException $e) {
     die("Adatbázis hiba: " . $e->getMessage());
 }
+
 
 
 
