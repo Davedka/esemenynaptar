@@ -9,7 +9,7 @@ if (!isset($_SESSION["user_id"])) {
 /* Automatikus törlés */
 $pdo->prepare("UPDATE events 
                SET is_deleted = TRUE 
-               WHERE event_date < CURDATE()")
+               WHERE event_date < CURRENT_DATE")
     ->execute();
 
 /* Aktuális hónap */
@@ -187,3 +187,4 @@ for ($day = 1; $day <= $daysInMonth; $day++) {
 
 </div>
 </div>
+
