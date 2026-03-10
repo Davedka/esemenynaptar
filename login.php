@@ -28,4 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <p style="text-align:center;margin-top:15px;">
         Nincs fiókod? <a href="register.php">Regisztráció</a>
     </p>
+    <p style="text-align:center;">
+        <a href="forgot_password.php">Elfelejtett jelszó?</a>
+    </p>
 </div>
+
