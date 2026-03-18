@@ -12,7 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user = $stmt->fetch();
 
     if ($user) {
-        // Token generálás
         $token = bin2hex(random_bytes(32));
         $expires = date("Y-m-d H:i:s", strtotime("+1 hour"));
 
@@ -21,18 +20,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $resetLink = "http://" . $_SERVER["HTTP_HOST"] . "/reset_password.php?token=" . $token;
 
-        // Email küldés PHPMailer-rel
         $mail = new PHPMailer(true);
         try {
             $mail->isSMTP();
-            $mail->Host       = "smtp.gmail.com";      // SMTP szerver
+            $mail->Host       = "smtp.gmail.com";
             $mail->SMTPAuth   = true;
-            $mail->Username   = "tamasdavidg@gmail.com"; // ← cseréld ki
-            $mail->Password   = "dsbh agje wuli dxms";           // ← cseréld ki (lásd lent)
+            $mail->Username   = "tamasdavidg@gmail.com"; // ← Gmail cím
+            $mail->Password   = "dsbh agje wuli dxms";           // ← App Password
             $mail->SMTPSecure = "tls";
             $mail->Port       = 587;
 
-            $mail->setFrom("te_emailed@gmail.com", "MSZC Eseménynaptár");
+            $mail->setFrom("mszc.esemenynaptar@gmail.com", "MSZC Eseménynaptár");
             $mail->addAddress($user["email"], $user["fullname"]);
 
             $mail->isHTML(true);
