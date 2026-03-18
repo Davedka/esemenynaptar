@@ -3,13 +3,16 @@ require "config.php";
 
 $token = $_GET["token"] ?? "";
 
-// Token ellenőrzés
 $stmt = $pdo->prepare("SELECT * FROM users WHERE reset_token = ? AND reset_expires > NOW()");
 $stmt->execute([$token]);
 $user = $stmt->fetch();
 
 if (!$user) {
-    die("<div class='container'><p style='color:red'>Érvénytelen vagy lejárt link!</p><a href='login.php'>Vissza</a></div>");
+    die("<link rel='stylesheet' href='style.css'>
+         <div class='container'>
+         <p style='color:red'>Érvénytelen vagy lejárt link!</p>
+         <a href='login.php'>Vissza</a>
+         </div>");
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
