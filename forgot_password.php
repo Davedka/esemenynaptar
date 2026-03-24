@@ -1,8 +1,5 @@
 <?php
 require "config.php";
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-require "vendor/autoload.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
@@ -20,35 +17,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $resetLink = "http://" . $_SERVER["HTTP_HOST"] . "/reset_password.php?token=" . $token;
 
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host       = "smtp.gmail.com";
-            $mail->SMTPAuth   = true;
-            $mail->Username   = "tamasdavidg@gmail.com"; // ← Gmail cím
-            $mail->Password   = "dsbh agje wuli dxms";           // ← App Password
-            $mail->SMTPSecure = "tls";
-            $mail->Port       = 587;
-            $mail->Timeout    = 10;
+        $apiKey = "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"; // ← Brevo API kulcs
 
-            $mail->setFrom("mszc.esemenynaptar@gmail.com", "MSZC Eseménynaptár");
-            $mail->addAddress($user["email"], $user["fullname"]);
-
-            $mail->isHTML(true);
-            $mail->Subject = "Jelszó visszaállítás";
-            $mail->Body    = "
+        $data = [
+            "sender" => ["name" => "MSZC Eseménynaptár", "email" => "noreply@mszc.hu"],
+            "to" => [["email" => $user["email"], "name" => $user["fullname"]]],
+            "subject" => "Jelszó visszaállítás",
+            "htmlContent" => "
                 <h3>Jelszó visszaállítás</h3>
                 <p>Kattints az alábbi linkre a jelszavad visszaállításához:</p>
                 <a href='$resetLink'>$resetLink</a>
                 <p>A link 1 óráig érvényes.</p>
                 <p>Ha nem te kérted, hagyd figyelmen kívül ezt az emailt.</p>
-            ";
+            "
+        ];
 
-            $mail->send();
-            $success = "Az emailt elküldtük a(z) $email címre!";
+        $ch = curl_init("https://api.brevo.com/v3/smtp/email");
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Content-Type: application/json",
+            "api-key: $apiKey"
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-        } catch (Exception $e) {
-            $error = "Email küldési hiba: " . $mail->ErrorInfo;
+        if ($httpCode == 201) {
+            $success = "Az emailt elküldtük a(z) " . $user["email"] . " címre!";
+        } else {
+            $error = "Email küldési hiba: " . $response;
         }
 
     } else {
