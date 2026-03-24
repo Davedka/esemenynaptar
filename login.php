@@ -2,15 +2,19 @@
 ob_start();
 require "config.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$_POST["email"]]);
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->execute([$_POST["username"]]);
     $user = $stmt->fetch();
     
     if ($user && password_verify($_POST["password"], $user["password_hash"])) {
-        $_SESSION["user_id"] = $user["id"];
-        $_SESSION["fullname"] = $user["fullname"];
-        header("Location: dashboard.php");
-        exit;
+        if (!$user["verified"]) {
+            $error = "Erősítsd meg az email címed a regisztrációkor kapott kóddal!";
+        } else {
+            $_SESSION["user_id"] = $user["id"];
+            $_SESSION["username"] = $user["username"];
+            header("Location: dashboard.php");
+            exit;
+        }
     } else {
         $error = "Hibás adatok!";
     }
@@ -21,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Bejelentkezés</h2>
     <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>
     <form method="post">
-        <input name="email" placeholder="Email" required>
+        <input name="username" placeholder="Felhasználónév" required>
         <input type="password" name="password" placeholder="Jelszó" required>
         <button>Belépés</button>
     </form>
@@ -32,4 +36,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <a href="forgot_password.php">Elfelejtett jelszó?</a>
     </p>
 </div>
-
