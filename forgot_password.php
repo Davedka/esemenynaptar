@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Password   = "dsbh agje wuli dxms";           // ← App Password
             $mail->SMTPSecure = "tls";
             $mail->Port       = 587;
+            $mail->Timeout    = 10;
 
             $mail->setFrom("mszc.esemenynaptar@gmail.com", "MSZC Eseménynaptár");
             $mail->addAddress($user["email"], $user["fullname"]);
