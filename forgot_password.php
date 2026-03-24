@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $apiKey = "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"; // ← Brevo API kulcs
 
         $data = [
-            "sender" => ["name" => "MSZC Eseménynaptár", "email" => "noreply@mszc.hu"],
+            "sender" => ["name" => "MSZC Eseménynaptár", "email" => "tamasdavidg@gmail.com"],
             "to" => [["email" => $user["email"], "name" => $user["fullname"]]],
             "subject" => "Jelszó visszaállítás",
             "htmlContent" => "
