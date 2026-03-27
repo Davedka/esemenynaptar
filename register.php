@@ -3,7 +3,6 @@ require "config.php";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    // 1. lépés: kód ellenőrzés
     if (isset($_POST["verify_code"])) {
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ? AND verify_token = ?");
         $stmt->execute([$_POST["email"], $_POST["verify_code"]]);
@@ -20,7 +19,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $verifyEmail = $_POST["email"];
         }
 
-    // 2. lépés: regisztráció és kód küldés
     } else {
         $password = $_POST["password"];
         $passwordError = "";
@@ -36,21 +34,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($passwordError) {
             $error = $passwordError;
         } else {
-            $check = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-            $check->execute([$_POST["username"], $_POST["email"]]);
+            $check = $pdo->prepare("SELECT id FROM users WHERE fullname = ? OR email = ?");
+            $check->execute([$_POST["fullname"], $_POST["email"]]);
 
             if ($check->fetch()) {
-                $error = "Ez a felhasználónév vagy email már foglalt!";
+                $error = "Ez a teljes név vagy email már foglalt!";
             } else {
-                // 6 jegyű kód generálás
                 $code = strval(random_int(100000, 999999));
 
                 $stmt = $pdo->prepare("INSERT INTO users 
-                    (fullname, username, email, password_hash, role, school, verified, verify_token)
-                    VALUES (?, ?, ?, ?, ?, ?, FALSE, ?)");
+                    (fullname, email, password_hash, role, school, verified, verify_token)
+                    VALUES (?, ?, ?, ?, ?, FALSE, ?)");
                 $stmt->execute([
                     $_POST["fullname"],
-                    $_POST["username"],
                     $_POST["email"],
                     password_hash($password, PASSWORD_DEFAULT),
                     $_POST["role"],
@@ -58,7 +54,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $code
                 ]);
 
-                // Email küldés Brevo-val
                 $apiKey = getenv("BREVO_API_KEY");
                 $data = [
                     "sender" => ["name" => "MSZC Eseménynaptár", "email" => "tamasdavidg@gmail.com"],
@@ -113,7 +108,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>
     <form method="post">
         <input name="fullname" placeholder="Teljes név" required>
-        <input name="username" placeholder="Felhasználónév" required>
         <input name="email" placeholder="Email" required>
         <input type="password" name="password" placeholder="Jelszó" required>
         <small style="color:gray">Min. 9 karakter, tartalmazzon számot és speciális karaktert (!@#$% stb.)</small>
