@@ -2,8 +2,8 @@
 ob_start();
 require "config.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$_POST["username"]]);
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE fullname = ?");
+    $stmt->execute([$_POST["fullname"]]);
     $user = $stmt->fetch();
     
     if ($user && password_verify($_POST["password"], $user["password_hash"])) {
@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $error = "Erősítsd meg az email címed a regisztrációkor kapott kóddal!";
         } else {
             $_SESSION["user_id"] = $user["id"];
-            $_SESSION["username"] = $user["username"];
+            $_SESSION["fullname"] = $user["fullname"];
             header("Location: dashboard.php");
             exit;
         }
@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h2>Bejelentkezés</h2>
     <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>
     <form method="post">
-        <input name="username" placeholder="Felhasználónév" required>
+        <input name="fullname" placeholder="Teljes név" required>
         <input type="password" name="password" placeholder="Jelszó" required>
         <button>Belépés</button>
     </form>
