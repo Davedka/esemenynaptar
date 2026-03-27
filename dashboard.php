@@ -18,7 +18,7 @@ $year = $_GET['year'] ?? date("Y");
 
 $firstDayOfMonth = date("$year-$month-01");
 $daysInMonth = date("t", strtotime($firstDayOfMonth));
-$startDay = date("N", strtotime($firstDayOfMonth)); // 1 = hétfő
+$startDay = date("N", strtotime($firstDayOfMonth));
 
 /* Szűrés */
 $categoryFilter = $_GET['category'] ?? '';
@@ -56,151 +56,125 @@ $stmt = $pdo->prepare($query);
 $stmt->execute($params);
 $events = $stmt->fetchAll();
 
-/* Események csoportosítása nap szerint */
 $eventsByDay = [];
 foreach ($events as $event) {
     $day = date("j", strtotime($event["event_date"]));
     $eventsByDay[$day][] = $event;
 }
+
+$monthNames = [
+    1=>"Január", 2=>"Február", 3=>"Március", 4=>"Április",
+    5=>"Május", 6=>"Június", 7=>"Július", 8=>"Augusztus",
+    9=>"Szeptember", 10=>"Október", 11=>"November", 12=>"December"
+];
 ?>
 
 <link rel="stylesheet" href="style.css">
 
-<style>
-.calendar {
-    width: 95%;
-    max-width: 1000px;
-    margin: 30px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-}
-
-.day-name {
-    font-weight: bold;
-    text-align: center;
-}
-
-.day {
-    min-height: 100px;
-    border: 1px solid #ddd;
-    padding: 5px;
-    border-radius: 8px;
-    font-size: 14px;
-    position: relative;
-}
-
-.today {
-    background: #d1f0ff;
-}
-
-.event {
-    background: #2a5298;
-    color: white;
-    padding: 3px;
-    margin-top: 3px;
-    border-radius: 5px;
-    font-size: 12px;
-}
-</style>
+<div class="top-line"></div>
+<div class="orb-br"></div>
 
 <div class="navbar">
-    <div>
-        <strong>MSZC Gépészeti – Eseménynaptár</strong>
-    </div>
-    <div>
-         $_SESSION["fullname"]
+    <a class="navbar-brand" href="dashboard.php">MSZC Gépészeti – Eseménynaptár</a>
+    <div class="navbar-links">
+        <span style="color:rgba(255,255,255,.45);font-size:14px;padding:8px 12px;">
+            <?= htmlspecialchars($_SESSION["fullname"]) ?>
+        </span>
         <a href="add_event.php">Új esemény</a>
-        <a href="delete_account.php" style="color:red">Profil törlése</a>
+        <a href="delete_account.php" style="color:#ff6b82;">Profil törlése</a>
         <a href="logout.php">Kijelentkezés</a>
     </div>
 </div>
 
 <div class="calendar">
 
-<h2><?= $year ?> - <?= $month ?></h2>
+    <div class="calendar-header">
+        <div>
+            <div class="page-title"><?= $monthNames[(int)$month] ?> <?= $year ?></div>
+            <div class="page-subtitle">Eseménynaptár</div>
+        </div>
+        <div class="calendar-nav">
+            <a href="?month=<?= $month-1 <= 0 ? 12 : $month-1 ?>&year=<?= $month-1 <= 0 ? $year-1 : $year ?>">
+                <button>⬅ Előző</button>
+            </a>
+            <a href="?month=<?= $month+1 > 12 ? 1 : $month+1 ?>&year=<?= $month+1 > 12 ? $year+1 : $year ?>">
+                <button>Következő ➡</button>
+            </a>
+        </div>
+    </div>
 
-<a href="?month=<?= $month-1 ?>&year=<?= $year ?>">⬅ Előző</a>
-<a href="?month=<?= $month+1 ?>&year=<?= $year ?>">Következő ➡</a>
+    <form method="get" style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;align-items:center;">
+        <input type="hidden" name="month" value="<?= $month ?>">
+        <input type="hidden" name="year" value="<?= $year ?>">
 
-<hr>
+        <select name="category" style="width:auto;margin:0;">
+            <option value="">Összes kategória</option>
+            <?php foreach(["Oktatás","Sport","Szórakozás","Vizsga","Egyéb"] as $cat): ?>
+                <option <?= $categoryFilter == $cat ? 'selected' : '' ?>><?= $cat ?></option>
+            <?php endforeach; ?>
+        </select>
 
-<form method="get">
-    <input type="hidden" name="month" value="<?= $month ?>">
-    <input type="hidden" name="year" value="<?= $year ?>">
+        <select name="visibility" style="width:auto;margin:0;">
+            <option value="">Összes láthatóság</option>
+            <option value="private" <?= $visibilityFilter=='private' ? 'selected':'' ?>>Privát</option>
+            <option value="class"   <?= $visibilityFilter=='class'   ? 'selected':'' ?>>Osztály</option>
+            <option value="school"  <?= $visibilityFilter=='school'  ? 'selected':'' ?>>Iskola</option>
+            <option value="public"  <?= $visibilityFilter=='public'  ? 'selected':'' ?>>Publikus</option>
+        </select>
 
-    <select name="category">
-        <option value="">Összes kategória</option>
-        <option>Oktatás</option>
-        <option>Sport</option>
-        <option>Szórakozás</option>
-        <option>Vizsga</option>
-        <option>Egyéb</option>
-    </select>
+        <button style="width:auto;margin:0;padding:10px 24px;">Szűrés</button>
 
-    <select name="visibility">
-        <option value="">Összes láthatóság</option>
-        <option value="private">Privát</option>
-        <option value="class">Osztály</option>
-        <option value="school">Iskola</option>
-        <option value="public">Publikus</option>
-    </select>
+        <?php if($categoryFilter || $visibilityFilter): ?>
+            <a href="?month=<?= $month ?>&year=<?= $year ?>" 
+               style="font-size:13px;color:rgba(255,255,255,.4);">Szűrő törlése ✕</a>
+        <?php endif; ?>
+    </form>
 
-    <button>Szűrés</button>
-</form>
+    <div class="calendar-grid">
 
-<hr>
+        <?php
+        $days = ["Hétfő","Kedd","Szerda","Csütörtök","Péntek","Szombat","Vasárnap"];
+        foreach ($days as $d) {
+            echo "<div class='day-name'>$d</div>";
+        }
 
-<div class="calendar-grid">
+        for ($i = 1; $i < $startDay; $i++) {
+            echo "<div></div>";
+        }
 
-<?php
-$days = ["H", "K", "Sze", "Cs", "P", "Szo", "V"];
-foreach ($days as $d) {
-    echo "<div class='day-name'>$d</div>";
-}
+        for ($day = 1; $day <= $daysInMonth; $day++) {
+            $isToday = ($day == date("j") && $month == date("m") && $year == date("Y")) ? "today" : "";
 
-/* Üres cellák hónap elején */
-for ($i = 1; $i < $startDay; $i++) {
-    echo "<div></div>";
-}
+            echo "<div class='day $isToday'>";
+            echo "<span class='day-number'>$day</span>";
 
-/* Napok kirajzolása */
-for ($day = 1; $day <= $daysInMonth; $day++) {
+            if (isset($eventsByDay[$day])) {
+                foreach ($eventsByDay[$day] as $event) {
+                    $colorClass = match($event["category"] ?? '') {
+                        "Vizsga" => "red",
+                        "Sport"  => "gold",
+                        default  => ""
+                    };
 
-    $isToday = ($day == date("j") && $month == date("m") && $year == date("Y"))
-                ? "today" : "";
+                    echo "<div class='event $colorClass'>";
+                    echo htmlspecialchars($event["title"]);
 
-    echo "<div class='day $isToday'>";
-    echo "<strong>$day</strong>";
+                    if ($event["event_date"] == date("Y-m-d")) {
+                        echo " <span style='opacity:.7'>(Ma)</span>";
+                    }
 
-    if (isset($eventsByDay[$day])) {
-        foreach ($eventsByDay[$day] as $event) {
-            echo "<div class='event'>";
-            echo htmlspecialchars($event["title"]);
+                    if ($event["user_id"] == $_SESSION["user_id"]) {
+                        echo "<br><a href='delete_event.php?id=" . $event["id"] . "' 
+                              style='font-size:10px;opacity:.6;color:inherit;'>🗑 Törlés</a>";
+                    }
 
-            if ($event["event_date"] == date("Y-m-d")) {
-                echo " (Folyamatban)";
-            }
-
-            if ($event["user_id"] == $_SESSION["user_id"]) {
-                echo "<br><a href='delete_event.php?id=" . $event["id"] . "' 
-                      style='color:#ffaaaa;font-size:11px'>🗑 Törlés</a>";
+                    echo "</div>";
+                }
             }
 
             echo "</div>";
         }
-    }
+        ?>
 
-    echo "</div>";
-}
-?>
-
+    </div>
 </div>
-</div>
-
