@@ -21,6 +21,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     exit;
 }
 ?>
+
+<head>
+<?php include "head.php"; ?>
+</head>
+
 <link rel="stylesheet" href="style.css">
 <div class="container">
     <h2>Profil törlése</h2>
