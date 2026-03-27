@@ -1,5 +1,5 @@
 <meta charset="UTF-8">
 <title>Eseménynaptár</title>
 
-<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" href="/favicon.ico" type="image/x-icon">
 <link rel="stylesheet" href="/style.css">
