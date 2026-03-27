@@ -164,8 +164,8 @@ $monthNames = [
                     }
 
                     if ($event["user_id"] == $_SESSION["user_id"]) {
-                        echo "<br><a href='delete_event.php?id=" . $event["id"] . "' 
-                              style='font-size:10px;opacity:.6;color:inherit;'>🗑 Törlés</a>";
+                        echo "<div class='event $colorClass' style='cursor:pointer;' 
+                          onclick=\"location.href='event.php?id=" . $event["id"] . "'\">";
                     }
 
                     echo "</div>";
