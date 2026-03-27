@@ -238,9 +238,11 @@ $monthNames = [
 
                 <!-- Tartalom -->
                 <div style="flex:1;">
-                    <div style="font-size:15px;font-weight:600;color:white;margin-bottom:4px;">
-                        <?= htmlspecialchars($event["title"]) ?>
-                    </div>
+                    <a href="event.php?id=<?= $event["id"] ?>" style="text-decoration:none;">
+                        <div style="font-size:15px;font-weight:600;color:white;margin-bottom:4px;">
+                            <?= htmlspecialchars($event["title"]) ?>
+                        </div>
+                    </a>
                     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
                         <?php if($event["category"]): ?>
                             <span class="badge <?= $colorClass == 'red' ? 'badge-red' : ($colorClass == 'gold' ? 'badge-gold' : 'badge-cyan') ?>">
