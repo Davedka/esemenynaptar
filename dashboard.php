@@ -68,7 +68,9 @@ $monthNames = [
     9=>"Szeptember", 10=>"Október", 11=>"November", 12=>"December"
 ];
 ?>
-
+<head>
+<?php include "head.php"; ?>
+</head>
 <link rel="stylesheet" href="style.css">
 
 <div class="top-line"></div>
