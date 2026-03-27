@@ -15,12 +15,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         } else {
             $verifyError = "Hibás kód!";
-            $showVerify = true;
+            $showVerify  = true;
             $verifyEmail = $_POST["email"];
         }
 
     } else {
-        $password = $_POST["password"];
+        $password      = $_POST["password"];
         $passwordError = "";
 
         if (strlen($password) < 9) {
@@ -55,10 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ]);
 
                 $apiKey = getenv("BREVO_API_KEY");
-                $data = [
-                    "sender" => ["name" => "MSZC Eseménynaptár", "email" => "tamasdavidg@gmail.com"],
-                    "to" => [["email" => $_POST["email"], "name" => $_POST["fullname"]]],
-                    "subject" => "Email megerősítés",
+                $data   = [
+                    "sender"      => ["name" => "MSZC Eseménynaptár", "email" => "tamasdavidg@gmail.com"],
+                    "to"          => [["email" => $_POST["email"], "name" => $_POST["fullname"]]],
+                    "subject"     => "Email megerősítés",
                     "htmlContent" => "
                         <h3>Regisztráció megerősítése</h3>
                         <p>A megerősítő kódod:</p>
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 curl_close($ch);
 
                 if ($httpCode == 201) {
-                    $showVerify = true;
+                    $showVerify  = true;
                     $verifyEmail = $_POST["email"];
                 } else {
                     $error = "Email küldési hiba: " . $response;
@@ -90,45 +90,79 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="hu">
+<head><?php include "head.php"; ?></head>
+<body>
 
-<head>
-<?php include "head.php"; ?>
-</head>
-<link rel="stylesheet" href="style.css">
+<div class="top-line"></div>
+<div class="orb-br"></div>
+
 <div class="container">
+  <div class="container-box">
 
-<?php if (isset($showVerify)): ?>
-    <h2>Email megerősítés</h2>
-    <p>Elküldtük a 6 jegyű kódot a(z) <strong><?= htmlspecialchars($verifyEmail) ?></strong> címre.</p>
-    <?php if(isset($verifyError)) echo "<p style='color:red'>$verifyError</p>"; ?>
-    <form method="post">
+    <?php if (isset($showVerify)): ?>
+
+      <div class="verify-icon">📧</div>
+      <h2>Email megerősítés</h2>
+      <p class="verify-email-label">
+        Elküldtük a 6 jegyű kódot a(z)<br>
+        <strong><?= htmlspecialchars($verifyEmail) ?></strong> címre.
+      </p>
+
+      <?php if (isset($verifyError)): ?>
+        <div class="msg-error"><?= htmlspecialchars($verifyError) ?></div>
+      <?php endif; ?>
+
+      <form method="post">
         <input type="hidden" name="email" value="<?= htmlspecialchars($verifyEmail) ?>">
-        <input name="verify_code" placeholder="6 jegyű kód" maxlength="6" required>
-        <button>Megerősítés</button>
-    </form>
+        <input name="verify_code" placeholder="6 jegyű kód" maxlength="6"
+               required autocomplete="one-time-code"
+               style="letter-spacing:.3em;font-size:20px;text-align:center;">
+        <button>✓ Megerősítés</button>
+      </form>
 
-<?php else: ?>
-    <h2>Regisztráció</h2>
-    <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>
-    <form method="post">
-        <input name="fullname" placeholder="Teljes név" required>
-        <input name="email" placeholder="Email" required>
-        <input type="password" name="password" placeholder="Jelszó" required>
-        <small style="color:gray">Min. 9 karakter, tartalmazzon számot és speciális karaktert (!@#$% stb.)</small>
+      <div class="resend-link">
+        Nem kaptad meg? <a href="register.php">Próbáld újra</a>
+      </div>
+
+    <?php else: ?>
+
+      <h2>Regisztráció</h2>
+      <p class="subtitle">Hozz létre fiókot az eseménynaptárhoz</p>
+
+      <?php if (isset($error)): ?>
+        <div class="msg-error"><?= htmlspecialchars($error) ?></div>
+      <?php endif; ?>
+
+      <form method="post">
+        <input name="fullname"     placeholder="Teljes név" required autocomplete="name">
+        <input name="email"        placeholder="Email cím"  required autocomplete="email" type="email">
+        <input name="password" type="password" placeholder="Jelszó" required autocomplete="new-password">
+        <small>Min. 9 karakter, tartalmazzon számot és speciális karaktert (!@#$% stb.)</small>
+
         <select name="role">
-            <option value="student">Diák</option>
-            <option value="teacher">Tanár</option>
+          <option value="student">👤 Diák</option>
+          <option value="teacher">👩‍🏫 Tanár</option>
         </select>
-        <select name="school">
-            <option value="MSZC">MSZC</option>
-            <option value="SZIC">SZIC</option>
-            <option value="KSZC">KSZC</option>
-        </select>
-        <button>Regisztráció</button>
-    </form>
-    <p style="text-align:center;margin-top:15px;">
-        Van már fiókod? <a href="login.php">Bejelentkezés</a>
-    </p>
 
-<?php endif; ?>
+        <select name="school">
+          <option value="MSZC">MSZC</option>
+          <option value="SZIC">SZIC</option>
+          <option value="KSZC">KSZC</option>
+        </select>
+
+        <button>Regisztráció →</button>
+      </form>
+
+      <p style="text-align:center;margin-top:18px;font-size:14px;color:rgba(255,255,255,.4);">
+        Van már fiókod? <a href="login.php">Bejelentkezés</a>
+      </p>
+
+    <?php endif; ?>
+
+  </div>
 </div>
+
+</body>
+</html>
