@@ -178,3 +178,101 @@ $monthNames = [
 
     </div>
 </div>
+
+<!-- Események listája -->
+<div style="position:relative;z-index:1;max-width:1160px;margin:0 auto 40px;padding:0 20px;">
+
+    <div style="border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:16px;margin-bottom:24px;">
+        <div class="page-title" style="font-size:22px;">Események ebben a hónapban</div>
+        <div class="page-subtitle">Összes esemény időrendben</div>
+    </div>
+
+    <?php if (empty($events)): ?>
+        <p style="color:rgba(255,255,255,.35);font-size:14px;">Nincs esemény ebben a hónapban.</p>
+    <?php else: ?>
+
+        <?php
+        usort($events, fn($a, $b) => strcmp($a["event_date"], $b["event_date"]));
+        ?>
+
+        <?php foreach ($events as $event): ?>
+            <?php
+            $colorClass = match($event["category"] ?? '') {
+                "Vizsga" => "red",
+                "Sport"  => "gold",
+                default  => ""
+            };
+            $borderColor = match($event["category"] ?? '') {
+                "Vizsga" => "rgba(200,16,46,.30)",
+                "Sport"  => "rgba(200,151,42,.30)",
+                default  => "rgba(0,200,200,.18)"
+            };
+            $dotColor = match($event["category"] ?? '') {
+                "Vizsga" => "#ff6b82",
+                "Sport"  => "#f0c76b",
+                default  => "var(--cyan)"
+            };
+            ?>
+            <div style="
+                display:flex;
+                align-items:flex-start;
+                gap:20px;
+                padding:18px 22px;
+                margin-bottom:10px;
+                background:rgba(255,255,255,.03);
+                border:1px solid <?= $borderColor ?>;
+                border-radius:12px;
+            ">
+                <!-- Dátum oszlop -->
+                <div style="min-width:56px;text-align:center;">
+                    <div style="font-size:26px;font-weight:700;color:<?= $dotColor ?>;line-height:1;">
+                        <?= date("j", strtotime($event["event_date"])) ?>
+                    </div>
+                    <div style="font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px;">
+                        <?= $monthNames[(int)date("n", strtotime($event["event_date"]))] ?>
+                    </div>
+                </div>
+
+                <!-- Elválasztó vonal -->
+                <div style="width:1.5px;align-self:stretch;background:<?= $borderColor ?>;border-radius:2px;"></div>
+
+                <!-- Tartalom -->
+                <div style="flex:1;">
+                    <div style="font-size:15px;font-weight:600;color:white;margin-bottom:4px;">
+                        <?= htmlspecialchars($event["title"]) ?>
+                    </div>
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">
+                        <?php if($event["category"]): ?>
+                            <span class="badge <?= $colorClass == 'red' ? 'badge-red' : ($colorClass == 'gold' ? 'badge-gold' : 'badge-cyan') ?>">
+                                <?= htmlspecialchars($event["category"]) ?>
+                            </span>
+                        <?php endif; ?>
+                        <span class="badge badge-muted">
+                            <?= match($event["visibility"]) {
+                                'private' => '🔒 Privát',
+                                'class'   => '🏫 Osztály',
+                                'school'  => '🏛 Iskola',
+                                'public'  => '🌐 Publikus',
+                                default   => $event["visibility"]
+                            } ?>
+                        </span>
+                        <?php if($event["event_date"] == date("Y-m-d")): ?>
+                            <span class="badge badge-cyan">● Ma</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <!-- Törlés gomb -->
+                <?php if ($event["user_id"] == $_SESSION["user_id"]): ?>
+                    <a href="delete_event.php?id=<?= $event["id"] ?>" 
+                       style="color:rgba(255,255,255,.25);font-size:18px;align-self:center;transition:color .2s;"
+                       onmouseover="this.style.color='#ff6b82'"
+                       onmouseout="this.style.color='rgba(255,255,255,.25)'">
+                        🗑
+                    </a>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+
+    <?php endif; ?>
+</div>
