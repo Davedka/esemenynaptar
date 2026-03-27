@@ -33,13 +33,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <div class="container-box">
 
     <div class="verify-icon" style="
-        width: 60px;
-        height: 60px;
+        width: 240px;
+        height: 240px;
         border-radius: 50%;
         overflow: hidden;
         display: inline-block;
         box-shadow: 0 0 12px #00e5cc, 0 0 24px #00e5cc44;
-        ">
+        display: flex;
+        justify-content: center; 
+        align-items: center;"
+        >
             <img src="favicon.png" style="width:100%; height:100%; object-fit:cover; display:block;"
       />
 </div>
