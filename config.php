@@ -18,6 +18,7 @@ try {
 } catch (PDOException $e) {
     die("Adatbázis hiba: " . $e->getMessage());
 }
+?>
 
 <head>
 <meta charset="UTF-8">
