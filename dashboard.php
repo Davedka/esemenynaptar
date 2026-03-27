@@ -163,11 +163,8 @@ $monthNames = [
                         echo " <span style='opacity:.7'>(Ma)</span>";
                     }
 
-                    if ($event["user_id"] == $_SESSION["user_id"]) {
                         echo "<div class='event $colorClass' style='cursor:pointer;' 
                           onclick=\"location.href='event.php?id=" . $event["id"] . "'\">";
-                    }
-
                     echo "</div>";
                 }
             }
