@@ -28,7 +28,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: dashboard.php");
 }
 ?>
-
+<head>
+<?php include "head.php"; ?>
+</head>
 <link rel="stylesheet" href="style.css">
 
 <div class="container">
