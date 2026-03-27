@@ -55,7 +55,9 @@ $badgeClass = match($event["category"] ?? '') {
     default  => "badge-cyan"
 };
 ?>
-
+<head>
+<?php include "head.php"; ?>
+</head>
 <link rel="stylesheet" href="style.css">
 
 <div class="top-line"></div>
