@@ -1,11 +1,12 @@
 <?php
 ob_start();
 require "config.php";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE fullname = ?");
     $stmt->execute([$_POST["fullname"]]);
     $user = $stmt->fetch();
-    
+
     if ($user && password_verify($_POST["password"], $user["password_hash"])) {
         if (!$user["verified"]) {
             $error = "Erősítsd meg az email címed a regisztrációkor kapott kóddal!";
@@ -16,27 +17,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
     } else {
-        $error = "Hibás adatok!";
+        $error = "Hibás felhasználónév vagy jelszó!";
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="hu">
+<head><?php include "head.php"; ?></head>
+<body>
 
-<head>
-<?php include "head.php"; ?>
-</head>
-<link rel="stylesheet" href="style.css">
+<div class="top-line"></div>
+<div class="orb-br"></div>
+
 <div class="container">
+  <div class="container-box">
+
+    <div class="verify-icon" style="font-size:24px;">🎓</div>
     <h2>Bejelentkezés</h2>
-    <?php if(isset($error)) echo "<p style='color:red'>$error</p>"; ?>
+    <p class="subtitle">MSZC Gépészeti – Eseménynaptár</p>
+
+    <?php if (isset($error)): ?>
+      <div class="msg-error"><?= htmlspecialchars($error) ?></div>
+    <?php endif; ?>
+
     <form method="post">
-        <input name="fullname" placeholder="Teljes név" required>
-        <input type="password" name="password" placeholder="Jelszó" required>
-        <button>Belépés</button>
+      <input name="fullname"  placeholder="Teljes név" required autocomplete="name">
+      <input name="password" type="password" placeholder="Jelszó" required autocomplete="current-password">
+      <button>Belépés →</button>
     </form>
-    <p style="text-align:center;margin-top:15px;">
-        Nincs fiókod? <a href="register.php">Regisztráció</a>
+
+    <p style="text-align:center;margin-top:18px;font-size:14px;color:rgba(255,255,255,.4);">
+      Nincs fiókod? <a href="register.php">Regisztráció</a>
     </p>
-    <p style="text-align:center;">
-        <a href="forgot_password.php">Elfelejtett jelszó?</a>
+    <p style="text-align:center;margin-top:8px;font-size:13px;">
+      <a href="forgot_password.php" style="color:rgba(255,255,255,.3);">Elfelejtett jelszó?</a>
     </p>
+
+  </div>
 </div>
+
+</body>
+</html>
