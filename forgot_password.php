@@ -55,6 +55,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+
+<head>
+<?php include "head.php"; ?>
+</head>
 <link rel="stylesheet" href="style.css">
 <div class="container">
     <h2>Elfelejtett jelszó</h2>
