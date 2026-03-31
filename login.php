@@ -12,7 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["user_id"] = $user["id"];
             $_SESSION["fullname"] = $user["fullname"];
 
-            // Remember me
             if (isset($_POST["remember"])) {
                 $token = bin2hex(random_bytes(32));
                 $expires = date("Y-m-d H:i:s", strtotime("+30 days"));
@@ -31,7 +30,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// Remember me cookie ellenőrzés
 if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
     $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token = ? AND remember_expires > NOW()");
     $stmt->execute([$_COOKIE["remember_token"]]);
@@ -58,7 +56,6 @@ if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
         height: 240px;
         border-radius: 50%;
         overflow: hidden;
-        display: inline-block;
         box-shadow: 0 0 12px #00e5cc, 0 0 24px #00e5cc44;
         display: flex;
         justify-content: center;
@@ -74,14 +71,15 @@ if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
       <input name="fullname" placeholder="Teljes név" required autocomplete="name">
       <input name="password" type="password" placeholder="Jelszó" required autocomplete="current-password">
 
-      <!-- Remember me -->
       <label style="display:flex;align-items:center;gap:10px;margin:10px 2px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.55);">
         <input type="checkbox" name="remember" style="
-            width:16px;
-            height:16px;
+            width:16px !important;
+            height:16px !important;
+            min-width:16px !important;
             margin:0;
             accent-color:var(--cyan);
             cursor:pointer;
+            flex-shrink:0;
         ">
         Emlékezz rám 30 napig
       </label>
