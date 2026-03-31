@@ -69,6 +69,10 @@ $monthNames = [
 ];
 ?>
 
+<head>
+<?php include "head.php"; ?>
+</head>
+
 <link rel="stylesheet" href="style.css">
 
 <div class="top-line"></div>
