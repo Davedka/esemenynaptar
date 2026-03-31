@@ -227,7 +227,7 @@ $monthNames = [
         <a href="dashboard.php" class="active">
             <span class="nav-icon">📅</span> Eseménynaptár
         </a>
-        <a href="orarend.php">
+        <a href="ticky-6r32.onrender.com">
             <span class="nav-icon">📋</span> Órarend
         </a>
 
