@@ -19,9 +19,14 @@ try {
     die("Adatbázis hiba: " . $e->getMessage());
 }
 
+// Remember me ellenőrzés
+if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token = ? AND remember_expires > NOW()");
+    $stmt->execute([$_COOKIE["remember_token"]]);
+    $rememberUser = $stmt->fetch();
 
-
-
-
-
-
+    if ($rememberUser) {
+        $_SESSION["user_id"] = $rememberUser["id"];
+        $_SESSION["fullname"] = $rememberUser["fullname"];
+    }
+}
