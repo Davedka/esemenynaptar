@@ -72,17 +72,40 @@ if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
       <input name="password" type="password" placeholder="Jelszó" required autocomplete="current-password">
 
       <label style="display:flex;align-items:center;gap:10px;margin:10px 2px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.55);">
-        <input type="checkbox" name="remember" style="
-            width:16px !important;
-            height:16px !important;
-            min-width:16px !important;
-            margin:0;
-            accent-color:var(--cyan);
-            cursor:pointer;
-            flex-shrink:0;
-        ">
-        Emlékezz rám 30 napig
-      </label>
+    <input type="checkbox" name="remember" id="remember" style="display:none;">
+    <div id="checkboxBox" style="
+        width:18px;
+        height:18px;
+        min-width:18px;
+        border:1.5px solid rgba(0,200,200,.45);
+        border-radius:4px;
+        background:rgba(0,200,200,.05);
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        transition:all .2s;
+        font-size:13px;
+    " onclick="toggleCheckbox()"></div>
+    Emlékezz rám 30 napig
+</label>
+
+<script>
+function toggleCheckbox() {
+    const cb  = document.getElementById('remember');
+    const box = document.getElementById('checkboxBox');
+    cb.checked = !cb.checked;
+    if (cb.checked) {
+        box.style.background = 'rgba(0,200,200,.20)';
+        box.style.borderColor = 'var(--cyan)';
+        box.innerHTML = '<span style="color:var(--cyan);">✓</span>';
+    } else {
+        box.style.background = 'rgba(0,200,200,.05)';
+        box.style.borderColor = 'rgba(0,200,200,.45)';
+        box.innerHTML = '';
+    }
+}
+</script>
 
       <button>Belépés →</button>
     </form>
