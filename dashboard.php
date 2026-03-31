@@ -69,14 +69,14 @@ $monthNames = [
 ];
 ?>
 
-<head>
-<?php include "head.php"; ?>
-</head>
+<!DOCTYPE html>
+<html lang="hu">
+<head><?php include "head.php"; ?></head>
+<body>
 
 <link rel="stylesheet" href="style.css">
 
 <style>
-/* Oldalsáv */
 .sidebar {
     position: fixed;
     top: 0;
@@ -212,10 +212,8 @@ $monthNames = [
 <div class="top-line"></div>
 <div class="orb-br"></div>
 
-<!-- Oldalsáv overlay -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-<!-- Oldalsáv -->
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-title">MSZC Gépészeti</div>
@@ -227,7 +225,7 @@ $monthNames = [
         <a href="dashboard.php" class="active">
             <span class="nav-icon">📅</span> Eseménynaptár
         </a>
-        <a href="ticky-6r32.onrender.com" target="_blank">
+        <a href="https://ticky-6r32.onrender.com">
             <span class="nav-icon">📋</span> Órarend
         </a>
 
@@ -247,7 +245,6 @@ $monthNames = [
     </div>
 </div>
 
-<!-- Benyíló fül -->
 <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">›</div>
 
 <script>
@@ -342,8 +339,9 @@ function closeSidebar() {
 
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $isToday = ($day == date("j") && $month == date("m") && $year == date("Y")) ? "today" : "";
+            $dateStr = $year . "-" . str_pad($month, 2, "0", STR_PAD_LEFT) . "-" . str_pad($day, 2, "0", STR_PAD_LEFT);
 
-            echo "<div class='day $isToday'>";
+            echo "<div class='day $isToday' style='cursor:pointer;' onclick=\"location.href='add_event.php?date=$dateStr'\">";
             echo "<span class='day-number'>$day</span>";
 
             if (isset($eventsByDay[$day])) {
@@ -355,7 +353,7 @@ function closeSidebar() {
                     };
 
                     echo "<div class='event $colorClass' style='cursor:pointer;'
-                          onclick=\"location.href='event.php?id=" . $event["id"] . "'\">";
+                          onclick=\"event.stopPropagation();location.href='event.php?id=" . $event["id"] . "'\">";
                     echo htmlspecialchars($event["title"]);
 
                     if ($event["event_date"] == date("Y-m-d")) {
@@ -435,10 +433,8 @@ function closeSidebar() {
             onmouseover="this.style.background='rgba(255,255,255,.055)';this.style.borderColor='<?= $borderColorHover ?>'"
             onmouseout="this.style.background='rgba(255,255,255,.03)';this.style.borderColor='<?= $borderColor ?>'">
 
-                <!-- Bal színes sáv -->
                 <div style="width:4px;background:<?= $dotColor ?>;flex-shrink:0;"></div>
 
-                <!-- Dátum oszlop -->
                 <div style="min-width:72px;text-align:center;padding:16px 12px;border-right:1px solid rgba(255,255,255,.06);">
                     <div style="font-size:28px;font-weight:700;color:<?= $dotColor ?>;line-height:1;">
                         <?= date("j", strtotime($event["event_date"])) ?>
@@ -451,7 +447,6 @@ function closeSidebar() {
                     </div>
                 </div>
 
-                <!-- Tartalom -->
                 <div style="flex:1;padding:16px 20px;">
                     <div style="font-size:15px;font-weight:600;color:white;margin-bottom:8px;">
                         <?= htmlspecialchars($event["title"]) ?>
@@ -477,7 +472,6 @@ function closeSidebar() {
                     </div>
                 </div>
 
-                <!-- Törlés gomb -->
                 <?php if ($event["user_id"] == $_SESSION["user_id"]): ?>
                     <div style="display:flex;align-items:center;padding:0 20px;border-left:1px solid rgba(255,255,255,.06);">
                         <a href="delete_event.php?id=<?= $event["id"] ?>"
@@ -495,3 +489,6 @@ function closeSidebar() {
 
     <?php endif; ?>
 </div>
+
+</body>
+</html>
