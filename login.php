@@ -19,7 +19,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $pdo->prepare("UPDATE users SET remember_token = ?, remember_expires = ? WHERE id = ?")
                     ->execute([$token, $expires, $user["id"]]);
 
-                setcookie("remember_token", $token, strtotime("+30 days"), "/", "", false, true);
+                setcookie("remember_token", $token, [
+                    'expires'  => strtotime("+30 days"),
+                    'path'     => "/",
+                    'secure'   => false,
+                    'httponly' => true,
+                    'samesite' => 'Lax'
+                ]);
             }
 
             header("Location: dashboard.php");
@@ -30,17 +36,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE remember_token = ? AND remember_expires > NOW()");
-    $stmt->execute([$_COOKIE["remember_token"]]);
-    $user = $stmt->fetch();
-
-    if ($user) {
-        $_SESSION["user_id"] = $user["id"];
-        $_SESSION["fullname"] = $user["fullname"];
-        header("Location: dashboard.php");
-        exit;
-    }
+if (isset($_SESSION["user_id"])) {
+    header("Location: dashboard.php");
+    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -72,23 +70,34 @@ if (!isset($_SESSION["user_id"]) && isset($_COOKIE["remember_token"])) {
       <input name="password" type="password" placeholder="Jelszó" required autocomplete="current-password">
 
       <label style="display:flex;align-items:center;gap:10px;margin:10px 2px;cursor:pointer;font-size:14px;color:rgba(255,255,255,.55);">
-    <input type="checkbox" name="remember" id="remember" style="display:none;">
-    <div id="checkboxBox" style="
-        width:18px;
-        height:18px;
-        min-width:18px;
-        border:1.5px solid rgba(0,200,200,.45);
-        border-radius:4px;
-        background:rgba(0,200,200,.05);
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        cursor:pointer;
-        transition:all .2s;
-        font-size:13px;
-    " onclick="toggleCheckbox()"></div>
-    Emlékezz rám 30 napig
-</label>
+        <input type="checkbox" name="remember" id="remember" style="display:none;">
+        <div id="checkboxBox" style="
+            width:18px;
+            height:18px;
+            min-width:18px;
+            border:1.5px solid rgba(0,200,200,.45);
+            border-radius:4px;
+            background:rgba(0,200,200,.05);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor:pointer;
+            transition:all .2s;
+            font-size:13px;
+        " onclick="toggleCheckbox()"></div>
+        Emlékezz rám 30 napig
+      </label>
+
+      <button>Belépés →</button>
+    </form>
+    <p style="text-align:center;margin-top:18px;font-size:14px;color:rgba(255,255,255,.4);">
+      Nincs fiókod? <a href="register.php">Regisztráció</a>
+    </p>
+    <p style="text-align:center;margin-top:8px;font-size:13px;">
+      <a href="forgot_password.php" style="color:rgba(255,255,255,.3);">Elfelejtett jelszó?</a>
+    </p>
+  </div>
+</div>
 
 <script>
 function toggleCheckbox() {
@@ -107,15 +116,5 @@ function toggleCheckbox() {
 }
 </script>
 
-      <button>Belépés →</button>
-    </form>
-    <p style="text-align:center;margin-top:18px;font-size:14px;color:rgba(255,255,255,.4);">
-      Nincs fiókod? <a href="register.php">Regisztráció</a>
-    </p>
-    <p style="text-align:center;margin-top:8px;font-size:13px;">
-      <a href="forgot_password.php" style="color:rgba(255,255,255,.3);">Elfelejtett jelszó?</a>
-    </p>
-  </div>
-</div>
 </body>
 </html>
