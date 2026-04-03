@@ -67,6 +67,15 @@ $monthNames = [
     5=>"Május", 6=>"Június", 7=>"Július", 8=>"Augusztus",
     9=>"Szeptember", 10=>"Október", 11=>"November", 12=>"December"
 ];
+
+/* Szűrő URL suffix segédfüggvény */
+$filterSuffix = ($categoryFilter ? '&category='.urlencode($categoryFilter) : '')
+              . ($visibilityFilter ? '&visibility='.urlencode($visibilityFilter) : '');
+
+$prevMonth = $month - 1 <= 0 ? 12 : $month - 1;
+$prevYear  = $month - 1 <= 0 ? $year - 1 : $year;
+$nextMonth = $month + 1 > 12 ? 1 : $month + 1;
+$nextYear  = $month + 1 > 12 ? $year + 1 : $year;
 ?>
 
 <!DOCTYPE html>
@@ -289,10 +298,11 @@ function closeSidebar() {
             <div class="page-subtitle">Eseménynaptár</div>
         </div>
         <div class="calendar-nav">
-            <a href="?month=<?= $month-1 <= 0 ? 12 : $month-1 ?>&year=<?= $month-1 <= 0 ? $year-1 : $year ?>">
+            <!-- Szűrők megmaradnak hónapváltáskor -->
+            <a href="?month=<?= $prevMonth ?>&year=<?= $prevYear ?><?= $filterSuffix ?>">
                 <button>⬅ Előző</button>
             </a>
-            <a href="?month=<?= $month+1 > 12 ? 1 : $month+1 ?>&year=<?= $month+1 > 12 ? $year+1 : $year ?>">
+            <a href="?month=<?= $nextMonth ?>&year=<?= $nextYear ?><?= $filterSuffix ?>">
                 <button>Következő ➡</button>
             </a>
         </div>
@@ -380,13 +390,95 @@ function closeSidebar() {
 <!-- Események listája -->
 <div style="position:relative;z-index:1;max-width:1160px;margin:0 auto 40px;padding:0 20px;">
 
-    <div style="border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:16px;margin-bottom:24px;">
-        <div class="page-title" style="font-size:22px;">Események ebben a hónapban</div>
-        <div class="page-subtitle">Összes esemény időrendben</div>
+    <!-- Lista fejléc aktív szűrő jelzéssel -->
+    <div style="border-bottom:1px solid rgba(255,255,255,.07);padding-bottom:16px;margin-bottom:24px;
+                display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+            <div class="page-title" style="font-size:22px;">Események ebben a hónapban</div>
+            <div class="page-subtitle">
+                <?php if ($categoryFilter || $visibilityFilter): ?>
+                    Szűrt találatok &mdash; <?= count($events) ?> esemény
+                <?php else: ?>
+                    Összes esemény időrendben
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php if ($categoryFilter || $visibilityFilter): ?>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+                <span style="font-size:12px;color:rgba(255,255,255,.35);">Aktív szűrők:</span>
+
+                <?php if ($categoryFilter): ?>
+                    <?php $catColor = match($categoryFilter) {
+                        'Vizsga' => 'badge-red',
+                        'Sport'  => 'badge-gold',
+                        default  => 'badge-cyan'
+                    }; ?>
+                    <span class="badge <?= $catColor ?>">
+                        <?= htmlspecialchars($categoryFilter) ?>
+                    </span>
+                <?php endif; ?>
+
+                <?php if ($visibilityFilter): ?>
+                    <span class="badge badge-muted">
+                        <?= match($visibilityFilter) {
+                            'private' => '🔒 Privát',
+                            'class'   => '🏫 Osztály',
+                            'school'  => '🏛 Iskola',
+                            'public'  => '🌐 Publikus',
+                            default   => $visibilityFilter
+                        } ?>
+                    </span>
+                <?php endif; ?>
+
+                <a href="?month=<?= $month ?>&year=<?= $year ?>"
+                   style="font-size:12px;color:rgba(255,255,255,.35);padding:3px 10px;
+                          border:1px solid rgba(255,255,255,.12);border-radius:99px;
+                          transition:color .2s,border-color .2s;"
+                   onmouseover="this.style.color='white';this.style.borderColor='rgba(255,255,255,.3)'"
+                   onmouseout="this.style.color='rgba(255,255,255,.35)';this.style.borderColor='rgba(255,255,255,.12)'">
+                    ✕ Törlés
+                </a>
+            </div>
+        <?php endif; ?>
     </div>
 
     <?php if (empty($events)): ?>
-        <p style="color:rgba(255,255,255,.35);font-size:14px;">Nincs esemény ebben a hónapban.</p>
+        <!-- Üres állapot szűrőfüggő üzenettel -->
+        <div style="padding:48px 0;text-align:center;">
+            <div style="font-size:48px;margin-bottom:16px;opacity:.3;">
+                <?= ($categoryFilter || $visibilityFilter) ? '🔍' : '📭' ?>
+            </div>
+            <p style="color:rgba(255,255,255,.4);font-size:15px;margin-bottom:12px;">
+                <?php if ($categoryFilter || $visibilityFilter): ?>
+                    Nincs a szűrőknek megfelelő esemény ebben a hónapban.
+                <?php else: ?>
+                    Nincs esemény <?= $monthNames[(int)$month] ?>ban / <?= $monthNames[(int)$month] ?>ben.
+                <?php endif; ?>
+            </p>
+            <?php if ($categoryFilter || $visibilityFilter): ?>
+                <a href="?month=<?= $month ?>&year=<?= $year ?>"
+                   style="display:inline-flex;align-items:center;gap:6px;font-size:13px;
+                          color:var(--cyan);padding:8px 18px;
+                          border:1px solid rgba(0,200,200,.25);border-radius:8px;
+                          transition:background .2s;"
+                   onmouseover="this.style.background='rgba(0,200,200,.08)'"
+                   onmouseout="this.style.background='transparent'">
+                    Szűrő törlése →
+                </a>
+            <?php else: ?>
+                <a href="add_event.php"
+                   style="display:inline-flex;align-items:center;gap:6px;font-size:13px;
+                          color:var(--cyan);padding:8px 18px;
+                          border:1px solid rgba(0,200,200,.25);border-radius:8px;
+                          transition:background .2s;"
+                   onmouseover="this.style.background='rgba(0,200,200,.08)'"
+                   onmouseout="this.style.background='transparent'">
+                    ➕ Új esemény hozzáadása
+                </a>
+            <?php endif; ?>
+        </div>
+
     <?php else: ?>
 
         <?php
